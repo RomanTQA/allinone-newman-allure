@@ -1,0 +1,1338 @@
+{
+	"info": {
+		"_postman_id": "67ee6cc6-6251-4854-a282-ced31ec795fb",
+		"name": "only_auth_reg",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25964710",
+		"_collection_link": "https://interstellar-station-26496.postman.co/workspace/y-parcticum~ebaf9c4b-4abe-402f-848c-df92fdea68e9/collection/25964710-67ee6cc6-6251-4854-a282-ced31ec795fb?action=share&source=collection_link&creator=25964710"
+	},
+	"item": [
+		{
+			"name": "Auto_confirm_registration_Copy",
+			"item": [
+				{
+					"name": "step1- свободная тестовая почта_200",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка наличия тела ответа\", function () {\r",
+									"    pm.response.to.not.have.body;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{test_Gmail}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/verify-email/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"verify-email",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step2_user-reg- отправка с валидными данными",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка пустого тела ответа\", function () {\r",
+									"    pm.response.to.have.body(\"\");\r",
+									"});\r",
+									"\r",
+									"console.log(\"техническая пауза для доставки сообщения на сервер\")\r",
+									"setTimeout(() => {\r",
+									"            console.log (\"here supposed to be timeout 5000ms\")\r",
+									"        }, 5000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{test_Gmail}}\",\r\n    \"password\": \"B123456b\",\r\n    \"fav_genres\": {{req_fav_genres}}    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/user-registration/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user-registration",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step3--request for REFRESH auth Google",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Access_token внутри\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('access_token');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Обновление переменной Gaccess_token\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.environment.set(\"Gaccess_token\", jsonData.access_token);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"using Google API to refresh oAuth2.0\")\r",
+									"setTimeout(() => {\r",
+									"            console.log (\"here supposed to be timeout 4000\")\r",
+									"        }, 4000);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "response_type",
+								"value": "code",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{Gclient_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{Gclient_secrest}}",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{Grefresh_token}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://oauth2.googleapis.com/token",
+							"protocol": "https",
+							"host": [
+								"oauth2",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step4--Найти сообщение в листе на тестовой почте Google",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const today = new Date().toISOString().split('T')[0];\r",
+									"pm.environment.set('today', today);\r",
+									"\r",
+									"const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0];\r",
+									"pm.environment.set('yesterday', yesterday);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.environment.set('target_message', false)\r",
+									"\r",
+									"pm.test('сообщения найдены', function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('messages');\r",
+									"})\r",
+									"\r",
+									"pm.test('Сообщений  больше нуля', function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.resultSizeEstimate).to.be.above(0);\r",
+									"})\r",
+									"\r",
+									"pm.test('запись значения ключа \\'id\\' в переменную окружения', function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    if (jsonData.resultSizeEstimate > 0) {\r",
+									"        var targetMessage = jsonData.messages[0].id;\r",
+									"        pm.environment.set('target_message', targetMessage);\r",
+									"        console.log('Значение ключа \\'id\\' первого элемента массива \\'messages\\':', targetMessage);\r",
+									"    } else {\r",
+									"        console.error('Значение ключа \\'resultSizeEstimate\\' меньше или равно нулю');\r",
+									"    }\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Gaccess_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=from:kinotochka2024@mail.ru is:unread after:{{yesterday}}&orderBy=newest",
+							"protocol": "https",
+							"host": [
+								"gmail",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"gmail",
+								"v1",
+								"users",
+								"me",
+								"messages"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "from:kinotochka2024@mail.ru is:unread after:{{yesterday}}"
+								},
+								{
+									"key": "orderBy",
+									"value": "newest"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step5--прочесть найденное сообщение на почте Google",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"base_reg_KinoToken\", false);\r",
+									"\r",
+									"pm.test(\"наличие ключа 'snippet' в ответе\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property('snippet');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"извлечение токена регистрации КиноТочки из значения ключа 'snippet' в переменную окружения\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var snippetValue = jsonData.snippet;\r",
+									"    var activationLink = snippetValue.match(/\\/activation\\/(.*?)\\./)[1];\r",
+									"    pm.environment.set(\"base_reg_KinoToken\", activationLink);\r",
+									"    console.log(\"Значение токена регистрации КиноТочки из  'snippet': \", activationLink);\r",
+									"});\r",
+									"\r",
+									"var rawBody = pm.response.json().raw;\r",
+									"var decodedBody = Buffer.from(rawBody, 'base64').toString('utf-8');\r",
+									"\r",
+									"\r",
+									"// Находим токен с помощью регулярного выражения\r",
+									"var token = decodedBody.match(/\\/activation\\/(.*?)\\//)[1];\r",
+									"\r",
+									"// Записываем токен в переменную окружения\r",
+									"pm.environment.set(\"base_reg_KinoToken\", token);\r",
+									"console.log(token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Gaccess_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://www.googleapis.com/gmail/v1/users/me/messages/{{target_message}}?format=raw",
+							"protocol": "https",
+							"host": [
+								"www",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"gmail",
+								"v1",
+								"users",
+								"me",
+								"messages",
+								"{{target_message}}"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "raw"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step6--чистим за собой тестовый почтовый ящик от сообщения в Gmail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									" let targetMessage = pm.environment.get(\"target_message\");\r",
+									" let Gaccess_token = pm.environment.get(\"Gaccess_token\");\r",
+									"\r",
+									"// Объявляем переменную \"gReadResponse\" и присваиваем ей значение false\r",
+									"pm.environment.set(\"gReadResponse\", false);\r",
+									"\r",
+									"// Отправляем запрос на получение сообщения\r",
+									"pm.sendRequest({\r",
+									"    url: 'https://www.googleapis.com/gmail/v1/users/me/messages/' + targetMessage + '?format=full',\r",
+									"    method: 'GET',\r",
+									"    header: {\r",
+									"        'Authorization': 'Bearer ' + Gaccess_token\r",
+									"    }\r",
+									"}, function (err, response) {\r",
+									"    // Извлекаем код ответа и сохраняем его в переменную \"gReadResponse\"\r",
+									"    pm.environment.set(\"gReadResponse\", response.code);\r",
+									"    \r",
+									"    // Проверяем код ответа и запускаем тест\r",
+									"    pm.test(\"Проверка что сообщение удалено\", function () {\r",
+									"        pm.expect(response.code).to.eql(404);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Gaccess_token}}"
+							}
+						],
+						"url": {
+							"raw": "https://www.googleapis.com/gmail/v1/users/me/messages/{{target_message}}",
+							"protocol": "https",
+							"host": [
+								"www",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"gmail",
+								"v1",
+								"users",
+								"me",
+								"messages",
+								"{{target_message}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step7-если регКиноТокен -corrupted",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let basicRegKinoToken = pm.environment.get(\"base_reg_KinoToken\");\r",
+									"pm.environment.set(\"current_reg_KinoToken\", false);\r",
+									"// Проверяем, равен ли basicRegKinoToken false\r",
+									"if (basicRegKinoToken !== \"false\") {\r",
+									"    // Преобразуем строку в массив символов\r",
+									"    let tokenArray = basicRegKinoToken.split('');\r",
+									"    // Выбираем случайный индекс символа\r",
+									"    let randomIndex = Math.floor(Math.random() * tokenArray.length);\r",
+									"    // Выбираем случайный символ для замены\r",
+									"    let newChar = Math.random().toString(36).substring(2, 3); // Латиница и цифры\r",
+									"    // Заменяем символ в массиве\r",
+									"    tokenArray[randomIndex] = newChar;\r",
+									"    // Объединяем массив обратно в строку\r",
+									"    let corruptedToken = tokenArray.join('');\r",
+									"    // Записываем corrupted токен в переменную current_reg_KinoToken через pm environment set\r",
+									"    pm.environment.set(\"current_reg_KinoToken\", corruptedToken);\r",
+									"} else {\r",
+									"    // Выводим ошибку, если basicRegKinoToken равен false\r",
+									"    console.error(\"Ошибка: basicRegKinoToken равен false\");\r",
+									"}\r",
+									"pm.environment.set(\"secondResponse\", false);\r",
+									"pm.environment.set(\"thirdResponse\", false);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка, что токены не равны\", function () {\r",
+									"    pm.expect(pm.environment.get(\"base_reg_KinoToken\")).to.not.eql(pm.environment.get(\"current_reg_KinoToken\"));\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"const sendRegUser = {\r",
+									"    url: urlKinot + '/api/v1/auth/login/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail,\r",
+									"            \"password\": \"B123456b\"      \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('secondResponse', res.code);\r",
+									"        pm.test(\"Auth request was NOT successful\", function () {\r",
+									"        const secondResponse = pm.environment.get(\"secondResponse\");    \r",
+									"        pm.expect(secondResponse).to.be.equal(400);\r",
+									"    });\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('thirdResponse', res.code);\r",
+									"\r",
+									"        pm.test(\"тестовая почта свободна, юзер не был создан\", function () {\r",
+									"    const thirdResponse = pm.environment.get(\"thirdResponse\");\r",
+									"    pm.expect(thirdResponse).to.be.equal(200);\r",
+									"});\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/activation/{{current_reg_KinoToken}}",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"activation",
+								"{{current_reg_KinoToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step8-если не отправлять токен",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.environment.set(\"secondResponse\", false);\r",
+									"pm.environment.set(\"thirdResponse\", false);\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"const sendRegUser = {\r",
+									"    url: urlKinot + '/api/v1/auth/login/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail,\r",
+									"            \"password\": \"B123456b\"      \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('secondResponse', res.code);\r",
+									"        pm.test(\"Auth request was NOT successful\", function () {\r",
+									"    const secondResponse = pm.environment.get(\"secondResponse\");\r",
+									"    pm.expect(secondResponse).to.not.be.within(200, 299);\r",
+									"});\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('thirdResponse', res.code);\r",
+									"        pm.test(\"тестовая почта свободна, юзер не был создан\", function () {\r",
+									"    const thirdResponse = pm.environment.get(\"thirdResponse\");\r",
+									"    pm.expect(thirdResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/activation/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"activation",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step9-если регКиноТокен -валидный",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let basicRegKinoToken = pm.environment.get(\"base_reg_KinoToken\");\r",
+									"pm.environment.set(\"current_reg_KinoToken\", false);\r",
+									"// Проверяем, равен ли basicRegKinoToken false\r",
+									"if (basicRegKinoToken !== \"false\") {\r",
+									"    \r",
+									"    pm.environment.set(\"current_reg_KinoToken\", basicRegKinoToken);\r",
+									"} else {\r",
+									"    // Выводим ошибку, если basicRegKinoToken равен false\r",
+									"    console.error(\"Ошибка: basicRegKinoToken равен false\");\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверка, что токены  равны\", function () {\r",
+									"    pm.expect(pm.environment.get(\"base_reg_KinoToken\")).to.eql(pm.environment.get(\"current_reg_KinoToken\"));\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"secondResponse\", false);\r",
+									"pm.environment.set(\"thirdResponse\", false);\r",
+									"pm.environment.set(\"basicToken2\", false);\r",
+									"pm.environment.set('fourResponse', false);\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"const sendRegUser = {\r",
+									"    url: urlKinot + '/api/v1/auth/login/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail,\r",
+									"            \"password\": \"B123456b\"      \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('secondResponse', res.code);\r",
+									"// Получим значение ключа \"access\" из ответа\r",
+									"            const responseBody = res.json();\r",
+									"            const accessValue = responseBody.access;\r",
+									"\r",
+									"            // Запишем значение ключа \"access\" в переменную окружения basicToken2\r",
+									"            pm.environment.set('basicToken2', accessValue);\r",
+									"            pm.test(\"Auth request was  successful\", function () {\r",
+									"    const secondResponse = pm.environment.get(\"secondResponse\");\r",
+									"    pm.expect(secondResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('thirdResponse', res.code);\r",
+									"        pm.test(\"тестовая почта занята, юзер был создан\", function () {\r",
+									"    const thirdResponse = pm.environment.get(\"thirdResponse\");\r",
+									"    pm.expect(thirdResponse).to.be.within(400, 499);\r",
+									"});\r",
+									"\r",
+									"     const basicToken2 = pm.environment.get(\"basicToken2\");\r",
+									"\r",
+									"  const sendRegUser3 = {\r",
+									"    url: urlKinot + '/api/v1/users-me/',\r",
+									"    method: 'GET',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json',\r",
+									"        'Authorization': 'token ' + basicToken2\r",
+									"    }\r",
+									"    \r",
+									"};            \r",
+									"\r",
+									"pm.sendRequest(sendRegUser3, function (err, res) {\r",
+									"    console.log(\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('fourResponse', res.code);\r",
+									"\r",
+									"        // Получим значение ключа \"fav_genres\" из ответа\r",
+									"        const responseBody = res.json();\r",
+									"        const genresValue = responseBody.fav_genres;\r",
+									"\r",
+									"        // Запишем значение ключа \"fav_genres\" в переменную окружения resp_fav_genres\r",
+									"        pm.environment.set('resp_fav_genres', JSON.stringify(genresValue));\r",
+									"        pm.test(\"данные пользователя получены\", function () {\r",
+									"    const fourResponse = pm.environment.get(\"fourResponse\");\r",
+									"    pm.expect(fourResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"\r",
+									"// Получим значение ключа \"fav_genres\" из переменных окружения\r",
+									"const reqFavGenres = JSON.parse(pm.environment.get(\"req_fav_genres\"));\r",
+									"\r",
+									"// Получим значение ключа \"fav_genres\" из ответа\r",
+									"const respFavGenres = JSON.parse(pm.environment.get(\"resp_fav_genres\"));\r",
+									"\r",
+									"// Проверим совпадение длины массивов\r",
+									"pm.test(\"fav_genres: Длины массивов совпадают\", function () {\r",
+									"    pm.expect(reqFavGenres.length).to.eql(respFavGenres.length);\r",
+									"});\r",
+									"\r",
+									"// Проверим совпадение порядка элементов\r",
+									"pm.test(\"fav_genres: Порядок элементов совпадает\", function () {\r",
+									"    for (let i = 0; i < reqFavGenres.length; i++) {\r",
+									"        pm.expect(reqFavGenres[i]).to.eql(respFavGenres[i]);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"  \r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/activation/{{base_reg_KinoToken}}/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"activation",
+								"{{base_reg_KinoToken}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step10-повторный запрос с валидным токеном",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"    pm.expect(pm.response.code).to.equal(400);\r",
+									"});\r",
+									"\r",
+									"if (pm.response.code !== 400)\r",
+									"{\r",
+									"    console.log (\"Тест провалился, попробуем подчистить- обновим токен авторизации basicToken2\")\r",
+									"pm.environment.set(\"secondResponse\", false);\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"\r",
+									"\r",
+									"const sendRegUser = {\r",
+									"    url: urlKinot + '/api/v1/auth/login/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail,\r",
+									"            \"password\": \"B123456b\"      \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('secondResponse', res.code);\r",
+									"// Получим значение ключа \"access\" из ответа\r",
+									"            const responseBody = res.json();\r",
+									"            const accessValue = responseBody.access;\r",
+									"\r",
+									"            // Запишем значение ключа \"access\" в переменную окружения basicToken2\r",
+									"            pm.environment.set('basicToken2', accessValue);\r",
+									"            pm.test(\"Auth request was  successful\", function () {\r",
+									"    const secondResponse = pm.environment.get(\"secondResponse\");\r",
+									"    pm.expect(secondResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"     console.log (\"basicToken2 обновлен, теперь он \" + pm.environment.get('basicToken2'));   \r",
+									"    }\r",
+									"});\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/activation/{{base_reg_KinoToken}}",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"activation",
+								"{{base_reg_KinoToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step 11 --удаляем созданного тестового юзера",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(() => {\r",
+									"            console.log (\"here supposed to be timeout 1500\")\r",
+									"        }, 1500);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is  in the 2XX range\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.within(200, 299);\r",
+									"    \r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"fiveResponse\", false);\r",
+									"pm.environment.set(\"sixResponse\", false);\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('sixResponse', res.code);\r",
+									"        \r",
+									"        pm.test(\"тестовая почта свободна, юзер не существует\", function () {\r",
+									"    const sixResponse = pm.environment.get(\"sixResponse\");\r",
+									"    pm.expect(sixResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{basicToken2}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/users-me/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users-me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step12-повторный запрос с валидным тем же  токеном",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"    \r",
+									"pm.environment.set(\"secondResponse\", false);\r",
+									"\r",
+									"pm.environment.set(\"thirdResponse\", false);\r",
+									"\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"\r",
+									"\r",
+									"const sendRegUser = {\r",
+									"    url: urlKinot + '/api/v1/auth/login/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail,\r",
+									"            \"password\": \"B123456b\"      \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('thirdResponse', res.code);\r",
+									"\r",
+									"            pm.test(\"mail NOT free, user created\", function () {\r",
+									"    const thirdResponse = pm.environment.get(\"thirdResponse\");\r",
+									"    pm.expect(thirdResponse).to.be.within(400, 499);\r",
+									"});\r",
+									"const thirdResponse = pm.environment.get(\"thirdResponse\");\r",
+									"    if (thirdResponse >= 400 && thirdResponse <= 499){\r",
+									"\r",
+									"        console.log (\" Need to update basicToken2 \")\r",
+									"        pm.sendRequest(sendRegUser, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('secondResponse', res.code);\r",
+									"// Получим значение ключа \"access\" из ответа\r",
+									"            const responseBody = res.json();\r",
+									"            const accessValue = responseBody.access;\r",
+									"\r",
+									"            // Запишем значение ключа \"access\" в переменную окружения basicToken2\r",
+									"            pm.environment.set('basicToken2', accessValue);\r",
+									"            pm.test(\"Auth request was  successful. +basicToken2\", function () {\r",
+									"    const secondResponse = pm.environment.get(\"secondResponse\");\r",
+									"    pm.expect(secondResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"     console.log (\"basicToken2 обновлен, теперь он \" + pm.environment.get('basicToken2'));   \r",
+									"    }\r",
+									"});\r",
+									"    }\r",
+									"\r",
+									"    }\r",
+									"   \r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/auth/activation/{{base_reg_KinoToken}}",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"activation",
+								"{{base_reg_KinoToken}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "step 13--чистим за собой - удаляем юзера",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"setTimeout(() => {\r",
+									"            console.log (\"here supposed to be timeout 1200\")\r",
+									"        }, 1200);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is  in the 2XX range\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.within(200, 299);\r",
+									"    \r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"fiveResponse\", false);\r",
+									"pm.environment.set(\"sixResponse\", false);\r",
+									"\r",
+									"const urlKinot = pm.variables.get(\"url_kinot\");\r",
+									"const testGmail = pm.variables.get(\"test_Gmail\");\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"const sendRegUser2 = {\r",
+									"    url: urlKinot + '/api/v1/auth/verify-email/',\r",
+									"    method: 'POST',\r",
+									"    header: {\r",
+									"        'Content-Type': 'application/json'\r",
+									"    },\r",
+									"    body: {\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify({\r",
+									"            \"email\": testGmail\r",
+									"                \r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(sendRegUser2, function (err, res) {\r",
+									"    console.log (\"p-s Request sent\")\r",
+									"    if (err) {\r",
+									"        console.error(err);\r",
+									"    } else {\r",
+									"        pm.environment.set('sixResponse', res.code);\r",
+									"        \r",
+									"        pm.test(\"тестовая почта свободна, юзер не существует\", function () {\r",
+									"    const sixResponse = pm.environment.get(\"sixResponse\");\r",
+									"    pm.expect(sixResponse).to.be.within(200, 299);\r",
+									"});\r",
+									"        \r",
+									"    }\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "token {{basicToken2}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url_kinot}}/api/v1/users-me/",
+							"host": [
+								"{{url_kinot}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users-me",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Название: Подтвердить почту для создания пользователя  \n\\* \\* \\* \\*  \nРучка:\n\nGET  \n/v1/auth/activation/  \n\\* \\* \\* \\*\n\nПредусловие:\n\n1) Пройти первый шаг регистрации - использовать ручку POST /v1/auth/user-registration , передать валидные данные email, password  \n2) Получить письмо на почте, забрать оттуда токен  \n3) токен передается в квери ручки\n\n\\* \\* \\* \\*\n\nдля передачи токена будут использоваться api google.  \nв конце теста пользователь будет удален.  \nпроверка создания пользователя осуществляется либо через  \nPOST /api/v1/auth/verify-email/ -- свободная почта;\n\nлибо через\n\nGET /api/v1/users-me/ -- получить данные пользователя ( чтобы проверить жанры)\n\nтестовая почта (юзер) : [nvalarmorgulis@gmail.com](https://mailto:nvalarmorgulis@gmail.com)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"setTimeout(() => {",
+							"            console.log (\"here supposed to be timeout 2000\")",
+							"        }, 2000);"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Response time is less than 1500ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(1500);",
+							"});",
+							"",
+							"pm.test(\"Status code is not in the 5XX range\", function () {",
+							"    pm.expect(pm.response.code).to.not.be.within(500, 599);",
+							"    ",
+							"});",
+							"",
+							"pm.test(\"Status code is not in the 3XX range\", function () {",
+							"    pm.expect(pm.response.code).to.not.be.within(300, 399);",
+							"    ",
+							"});"
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url_kinot",
+			"value": "http://kinotochka.site",
+			"type": "string"
+		}
+	]
+}
