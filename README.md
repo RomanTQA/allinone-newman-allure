@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Это малая демка тестирования api. в качестве стенда использован сайт:
 
 ---
@@ -30,7 +31,8 @@ npm install -g allure-commandline
 
 ### ВАЖНО: allure-commandline требует JDK 11, npm не поставит его.
 
-Посетите [официальный сайт Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) или [OpenJDK](https://adoptopenjdk.net/) и загрузите JDK 11. 2. Установите JDK 11, следуя инструкциям на сайте.
+Посетите [официальный сайт Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) или [OpenJDK](https://adoptopenjdk.net/)
+и загрузите JDK 11. 2. Установите JDK 11, следуя инструкциям на сайте.
 
 ## Настройка переменной окружения JAVA_HOME
 
