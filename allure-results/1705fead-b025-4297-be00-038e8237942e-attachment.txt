@@ -1,0 +1,3 @@
+level: log, messages: here supposed to be timeout 2000
+level: log, messages: Значение токена регистрации КиноТочки из  'snippet': ,eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+level: log, messages: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjIwMTcwMzg2NTksImVtYWlsIjoibnZhbGFybW9yZ3VsaXNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJCMTIzNDU2YiIsImZhdl9nZW5yZXMiOlsxLDIsNF19.xIBjVB5ib_CCPVlCLUwMYnpfKOHH2XBAb8WapialHAs

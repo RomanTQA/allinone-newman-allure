@@ -1,0 +1,5 @@
+{
+    "email": "nvalarmorgulis@gmail.com",
+    "password": "B123456b",
+    "fav_genres": [1, 2, 4]    
+}

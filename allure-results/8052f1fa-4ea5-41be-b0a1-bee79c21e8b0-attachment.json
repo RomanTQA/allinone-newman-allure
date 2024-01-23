@@ -1,0 +1,11 @@
+{
+    "Content-Type": "application/json",
+    "Authorization": "token false",
+    "User-Agent": "PostmanRuntime/7.36.1",
+    "Accept": "*/*",
+    "Cache-Control": "no-cache",
+    "Postman-Token": "d3408da8-1c8e-420b-aece-98cde3ff19e1",
+    "Host": "kinotochka.site",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive"
+}

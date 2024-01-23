@@ -1,0 +1,13 @@
+{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Vary": "Referer",
+    "Content-Encoding": "gzip",
+    "Date": "Tue, 23 Jan 2024 08:31:13 GMT",
+    "Server": "ESF",
+    "Cache-Control": "private",
+    "X-XSS-Protection": "0",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Alt-Svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+    "Transfer-Encoding": "chunked"
+}

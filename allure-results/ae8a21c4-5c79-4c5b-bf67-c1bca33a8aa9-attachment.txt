@@ -1,0 +1,6 @@
+{
+  "access_token": "ya29.a0AfB_byA3F6P570ZUOQA77KUXm0gGjufcBKtPOE83q22Dw0zk7yw4bdFLSjnjfnyFVXKyeRWJrI5XNc-ijcaBVjbcyK1pW64vU80gPCMR6BibhW7d_tIw6Dm_ek3VR5962Fb1XoEWtvUafxcBl2E38glwLc7qEpVgX_OT7waCgYKAS8SARMSFQHGX2Miv6DUih0Dq2tyetzRhdFzUw0173",
+  "expires_in": 3599,
+  "scope": "https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify",
+  "token_type": "Bearer"
+}

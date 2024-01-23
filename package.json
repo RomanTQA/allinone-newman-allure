@@ -1,6 +1,6 @@
 {
-  "name": "postman-tests",
-  "version": "1.0.0",
+  "name": "postman-tests-allured",
+  "version": "1.0.2",
   "description": "Automated Postman tests with Newman and Allure",
   "scripts": {
     "test": "node find-and-run.js",
@@ -9,10 +9,15 @@
     "serve-allure-report": "allure serve allure-results",
     "clean-results": "rm -rf allure-results",
     "newman": "newman",
-    "all1": "node all1.js "
+    "all1": "node all1.js"
   },
   "devDependencies": {
+    "allure-commandline": "^2.26.0",
     "newman": "^5.2.3",
-    "allure-commandline": "^2.13.8"
-  }
+    "newman-reporter-allure": "^2.11.1"
+  },
+  "main": "all1.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
